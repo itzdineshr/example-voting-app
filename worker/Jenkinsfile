@@ -1,0 +1,45 @@
+pipeline{
+
+    agent any
+
+    stages {
+
+        stage('Checkout'){
+            steps{
+                git credentialsId: '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',
+              url: 'https://github.com/itzdineshr/example-voting-app',
+              branch: 'main'
+            }
+        }
+
+        stage('Build Docker'){
+            environment{
+                DOCKER_IMAGE = "dineshr180298/worker-repo:${BUILD_NUMBER}"
+            }
+            steps{
+                script{
+                    sh '''
+                    echo 'Build Docker Image'
+                    cd worker
+                    docker build -t ${DOCKER_IMAGE} .
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image'){
+            environment{
+                DOCKER_IMAGE = "dineshr180298/worker-repo:${BUILD_NUMBER}"
+            }
+
+            steps{
+                script{
+                    def dockerImage = docker.image("${DOCKER_IMAGE}")
+                    docker.withRegistry("https://index.docker.io/v1/","docker-cred"){
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+}
