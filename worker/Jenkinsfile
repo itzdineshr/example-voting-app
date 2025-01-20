@@ -21,7 +21,7 @@ pipeline{
                     sh '''
                     echo 'Build Docker Image'
                     cd worker
-                    docker buildx -t ${DOCKER_IMAGE} .
+                    docker buildx build -t ${DOCKER_IMAGE} .
                     '''
                 }
             }
