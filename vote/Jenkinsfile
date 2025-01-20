@@ -28,6 +28,9 @@ pipeline{
         }
 
         stage('Push Docker Image'){
+            environment{
+                DOCKER_IMAGE = "dineshr180298/vote-repo:${BUILD_NUMBER}"
+            }
             steps{
                 script{
                     def dockerImage = docker.image("${DOCKER_IMAGE}")
