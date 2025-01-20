@@ -15,7 +15,7 @@ spec:
         app: vote
     spec:
       containers:
-      - image: dineshr180298/vote-repo:8
+      - image: dineshr180298/vote-repo:9
         name: vote
         ports:
         - containerPort: 80
