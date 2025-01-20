@@ -41,6 +41,28 @@ pipeline{
             }
         }
 
+        stage('Update Deployment File'){
+            environment{
+                GIT_REPO_NAME = "example-voting-app"
+                GIT_USER_NAME = "itzdineshr"
+                DOCKER_REGISTRY_NAME = "dineshr180298"
+                DOCKER_REPO = "vote-repo"
+            }
+            steps{
+                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]){
+                    sh '''
+                    git config user.email "itzdineshr@gmail.com"
+                    git config user.name "Dinesh R"
+                    BUILD_NUMBER=${BUILD_NUMBER}
+                    sed -i "s|image:.*|image: ${DOCKER_REGISTRY_NAME}/${DOCKER_REPO}:${BUILD_NUMBER}|g" k8s-specifications/vote-deployment.yaml
+                    git add k8s-specifications/vote-deployment.yaml
+                    git commit -m "Updated deployment image to version ${BUILD_NUMBER}"
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                    ''' 
+                }
+            }
+        }
+
     
     }
 }
